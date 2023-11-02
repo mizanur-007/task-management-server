@@ -47,8 +47,11 @@ app.get("/", (req, res) => {
   });
 
   app.get("/tasks", async(req,res)=>{
-    const result = await tasksCollection.find().toArray()
-    res.send(result)
+    const page = parseInt(req.query.currentPage);
+    const size = parseInt(req.query.size);
+    const result = await tasksCollection.find().skip(page*size).limit(size).toArray()
+    const count = await tasksCollection.estimatedDocumentCount();
+    res.send({result, count})
   })
 
   app.listen(port, ()=>{
