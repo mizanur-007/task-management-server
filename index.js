@@ -65,6 +65,7 @@ app.get("/", (req, res) => {
 
   //cookie post with jwt
   app.post("/jwt",async(req,res)=>{
+try{
     const data = req.body;
     const token = jwt.sign(data, process.env.ACCESS_TOKEN, {expiresIn:"5h"})
     res
@@ -73,6 +74,23 @@ app.get("/", (req, res) => {
         secure :false
     })
     .send({msg:'Succeed'});
+}
+catch{
+    console.log("error")
+}
+
+  })
+  //cookie clear with jwt
+  app.post("/logout",async(req,res)=>{
+try{
+    const data = req.body;
+    res
+    .clearCookie('token',{maxAge: 0})
+    .send({msg:'Succeed'});
+}
+catch{
+    console.log("error")
+}
 
   })
 
