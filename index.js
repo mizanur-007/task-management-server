@@ -1,13 +1,17 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
 
 // middleware 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    credentials: true
+}));
 app.use(express.json());
 
 // mongodb connect 
@@ -47,11 +51,29 @@ app.get("/", (req, res) => {
   });
 
   app.get("/tasks", async(req,res)=>{
-    const page = parseInt(req.query.currentPage);
+    try{
+        const page = parseInt(req.query.currentPage);
     const size = parseInt(req.query.size);
     const result = await tasksCollection.find().skip(page*size).limit(size).toArray()
     const count = await tasksCollection.estimatedDocumentCount();
     res.send({result, count})
+    }
+    catch{
+        console.log("error")
+    }
+  })
+
+  //cookie post with jwt
+  app.post("/jwt",async(req,res)=>{
+    const data = req.body;
+    const token = jwt.sign(data, process.env.ACCESS_TOKEN, {expiresIn:"5h"})
+    res
+    .cookie('token',token, {
+        httpOnly: true,
+        secure :false
+    })
+    .send({msg:'Succeed'});
+
   })
 
   app.listen(port, ()=>{
