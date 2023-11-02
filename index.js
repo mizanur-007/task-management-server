@@ -23,6 +23,9 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+const tasksCollection = client.db("TaskSwift").collection("task");
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -42,6 +45,11 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
     res.send("app is running");
   });
+
+  app.get("/tasks", async(req,res)=>{
+    const result = await tasksCollection.find().toArray()
+    res.send(result)
+  })
 
   app.listen(port, ()=>{
     console.log("app is running")
