@@ -2,7 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -61,6 +61,14 @@ app.get("/", (req, res) => {
     catch{
         console.log("error")
     }
+  })
+
+  //task with id
+  app.get("/tasks/:id",async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id : new ObjectId(id)};
+    const result = await tasksCollection.findOne(query);
+    res.send(result)
   })
 
   //cookie post with jwt
