@@ -71,6 +71,28 @@ app.get("/", (req, res) => {
     res.send(result)
   })
 
+
+  //update a doc
+  app.put('/update/:id',async(req,res)=>{
+    const id = req.params.id;
+    const updatedTask = req.body;
+    const query = {_id: new ObjectId(id)};
+    console.log(id,updatedTask)
+    const option = {upsert: true }
+    const updatedDoc = {
+      $set:{
+        projectTitle: updatedTask.projectTitle,
+        task: updatedTask.task,
+        shortDescription: updatedTask.shortDescription,
+        detailInformation: updatedTask.detailInformation,
+        dueDate: updatedTask.dueDate
+      }
+    }
+    const result = await tasksCollection.updateOne(query,updatedDoc,option);
+    res.send(result)
+  })
+
+
   //cookie post with jwt
   app.post("/jwt",async(req,res)=>{
 try{
