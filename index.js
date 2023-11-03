@@ -138,6 +138,19 @@ catch{
     const data = req.body;
     const result = await  todoCollection.insertOne(data)
     console.log(result)
+    res.send(result)
+  })
+
+  //add a task
+  app.post('/tasks', async(req,res)=>{
+    try{
+      const data = req.body;
+      const result = await tasksCollection.insertOne(data);
+res.send(result)
+    }
+    catch{
+      console.log(error)
+    }
   })
 
   //delete a task from todolist
