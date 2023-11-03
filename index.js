@@ -73,6 +73,13 @@ app.get("/", (req, res) => {
   })
 
 
+  //todolist
+  app.get('/todolist',async(req,res)=>{
+    const result = await todoCollection.find().toArray()
+    res.send(result)
+  })
+
+
 
   //update a doc
   app.put('/update/:id',async(req,res)=>{
@@ -131,6 +138,14 @@ catch{
     const data = req.body;
     const result = await  todoCollection.insertOne(data)
     console.log(result)
+  })
+
+  //delete a task from todolist
+  app.delete('/todolist/:id', async(req,res)=>{
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id)}
+    const result = await todoCollection.deleteOne(query)
+    res.send(result)
   })
 
   app.listen(port, ()=>{
