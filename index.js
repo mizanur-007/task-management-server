@@ -29,6 +29,7 @@ const client = new MongoClient(uri, {
 
 
 const tasksCollection = client.db("TaskSwift").collection("task");
+const todoCollection = client.db("TaskSwift").collection("todo");
 
 async function run() {
   try {
@@ -70,6 +71,7 @@ app.get("/", (req, res) => {
     const result = await tasksCollection.findOne(query);
     res.send(result)
   })
+
 
 
   //update a doc
@@ -122,6 +124,13 @@ catch{
     console.log("error")
 }
 
+  })
+
+  // todo list 
+  app.post('/todolist',async(req,res)=>{
+    const data = req.body;
+    const result = await  todoCollection.insertOne(data)
+    console.log(result)
   })
 
   app.listen(port, ()=>{
