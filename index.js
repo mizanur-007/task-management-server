@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 // middleware 
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://taskswift-cd0f1.web.app", "https://taskswift-cd0f1.firebaseapp.com"],
     credentials: true
 }));
 app.use(express.json());
