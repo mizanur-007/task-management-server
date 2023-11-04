@@ -2,17 +2,20 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
 
 // middleware 
+app.use(cookieParser());
 app.use(cors({
     origin: ["http://localhost:5173"],
     credentials: true
 }));
 app.use(express.json());
+
 
 // mongodb connect 
 
@@ -45,6 +48,30 @@ async function run() {
 }
 run().catch(console.dir);
 
+// verifyToken
+
+const Verify = (req,res,next)=>{
+  const token = req.cookies?.token;
+console.log(token)
+  if(!token){
+    return res.status(401).send({message:"Unauthorized Access"})
+  }
+  else{
+    jwt.verify(token, process.env.ACCESS_TOKEN, function(err,decoded){
+      if(err){
+        return res.status(401).send({message:"Unauthorized Access"})
+
+      }
+      else{
+        req.user = decoded;
+        console.log(req.user)
+        next()
+        
+      }
+    })
+  }
+}
+
 
 // get operations 
 app.get("/", (req, res) => {
@@ -74,8 +101,12 @@ app.get("/", (req, res) => {
 
 
   //todolist
-  app.get('/api/v1/todolist',async(req,res)=>{
-    const result = await todoCollection.find().toArray()
+  app.get('/api/v1/todolist',Verify,async(req,res)=>{
+
+    const user = req.query.email;
+    let query = {
+      userEmail: user}
+    const result = await todoCollection.find(query).toArray()
     res.send(result)
   })
 
