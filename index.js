@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
     res.send("app is running");
   });
 
-  app.get("/tasks", async(req,res)=>{
+  app.get("/api/v1/tasks", async(req,res)=>{
     try{
         const page = parseInt(req.query.currentPage);
     const size = parseInt(req.query.size);
@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
   })
 
   //task with id
-  app.get("/tasks/:id",async(req,res)=>{
+  app.get("/api/v1/tasks/:id",async(req,res)=>{
     const id = req.params.id;
     const query = {_id : new ObjectId(id)};
     const result = await tasksCollection.findOne(query);
@@ -74,7 +74,7 @@ app.get("/", (req, res) => {
 
 
   //todolist
-  app.get('/todolist',async(req,res)=>{
+  app.get('/api/v1/todolist',async(req,res)=>{
     const result = await todoCollection.find().toArray()
     res.send(result)
   })
@@ -82,7 +82,7 @@ app.get("/", (req, res) => {
 
 
   //update a doc
-  app.put('/update/:id',async(req,res)=>{
+  app.put('/api/v1/update/:id',async(req,res)=>{
     const id = req.params.id;
     const updatedTask = req.body;
     const query = {_id: new ObjectId(id)};
@@ -103,7 +103,7 @@ app.get("/", (req, res) => {
 
 
   //cookie post with jwt
-  app.post("/jwt",async(req,res)=>{
+  app.post("/api/v1/jwt",async(req,res)=>{
 try{
     const data = req.body;
     const token = jwt.sign(data, process.env.ACCESS_TOKEN, {expiresIn:"5h"})
@@ -120,7 +120,7 @@ catch{
 
   })
   //cookie clear with jwt
-  app.post("/logout",async(req,res)=>{
+  app.post("/api/v1/logout",async(req,res)=>{
 try{
     const data = req.body;
     res
@@ -134,7 +134,7 @@ catch{
   })
 
   // todo list 
-  app.post('/todolist',async(req,res)=>{
+  app.post('/api/v1/todolist',async(req,res)=>{
     const data = req.body;
     const result = await  todoCollection.insertOne(data)
     console.log(result)
@@ -142,7 +142,7 @@ catch{
   })
 
   //add a task
-  app.post('/tasks', async(req,res)=>{
+  app.post('/api/v1/tasks', async(req,res)=>{
     try{
       const data = req.body;
       const result = await tasksCollection.insertOne(data);
@@ -154,7 +154,7 @@ res.send(result)
   })
 
   //delete a task from todolist
-  app.delete('/todolist/:id', async(req,res)=>{
+  app.delete('/api/v1/todolist/:id', async(req,res)=>{
     const id = req.params.id;
     const query = { _id: new ObjectId(id)}
     const result = await todoCollection.deleteOne(query)
