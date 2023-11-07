@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 // middleware 
 app.use(cookieParser());
 app.use(cors({
-    origin: ["https://taskswift-cd0f1.web.app", "https://taskswift-cd0f1.firebaseapp.com"],
+    origin: ["https://taskswift-cd0f1.web.app", "https://taskswift-cd0f1.firebaseapp.com","http://localhost:5173"],
     credentials: true
 }));
 app.use(express.json());
@@ -92,7 +92,7 @@ app.get("/", (req, res) => {
   })
 
   //task with id
-  app.get("/api/v1/tasks/:id",async(req,res)=>{
+  app.get("/api/v1/tasks/:id",Verify,async(req,res)=>{
     const id = req.params.id;
     const query = {_id : new ObjectId(id)};
     const result = await tasksCollection.findOne(query);
@@ -113,7 +113,7 @@ app.get("/", (req, res) => {
 
 
   //update a doc
-  app.put('/api/v1/update/:id',async(req,res)=>{
+  app.put('/api/v1/update/:id',Verify,async(req,res)=>{
     const id = req.params.id;
     const updatedTask = req.body;
     const query = {_id: new ObjectId(id)};
@@ -141,7 +141,8 @@ try{
     res
     .cookie('token',token, {
         httpOnly: true,
-        secure :false
+        secure :true,
+        sameSite: 'none'
     })
     .send({msg:'Succeed'});
 }
@@ -165,7 +166,7 @@ catch{
   })
 
   // todo list 
-  app.post('/api/v1/todolist',async(req,res)=>{
+  app.post('/api/v1/todolist',Verify,async(req,res)=>{
     const data = req.body;
     const result = await  todoCollection.insertOne(data)
     console.log(result)
@@ -173,7 +174,7 @@ catch{
   })
 
   //add a task
-  app.post('/api/v1/tasks', async(req,res)=>{
+  app.post('/api/v1/tasks',Verify, async(req,res)=>{
     try{
       const data = req.body;
       const result = await tasksCollection.insertOne(data);
@@ -185,7 +186,7 @@ res.send(result)
   })
 
   //delete a task from todolist
-  app.delete('/api/v1/todolist/:id', async(req,res)=>{
+  app.delete('/api/v1/todolist/:id',Verify, async(req,res)=>{
     const id = req.params.id;
     const query = { _id: new ObjectId(id)}
     const result = await todoCollection.deleteOne(query)
